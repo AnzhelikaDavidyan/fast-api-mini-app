@@ -15,6 +15,7 @@ app/
   schemas.py         Request/response models
   store.py           BonusStore: reads/writes the database
   database.py        Tables, engine, DATABASE_URL loading
+sql/bonuses.sql      Plain-SQL reference of the schema and queries (not used by the app)
 tests/               pytest suite (uses an in-memory DB, never touches Postgres)
 .githooks/           commit-msg hook (commit message format)
 .github/workflows/   Pylint CI
@@ -37,6 +38,11 @@ offer   TEXT                   description  TEXT
 ```
 
 Tables are created automatically the first time the app talks to the database.
+
+The app builds its queries with SQLAlchemy (`app/store.py`). For reference,
+[`sql/bonuses.sql`](sql/bonuses.sql) has the same schema and queries in plain SQL. The app
+doesn't use that file; running it with
+`psql -U bonuses_user -d bonuses -f sql/bonuses.sql` leaves your data unchanged.
 
 ## Setup (first time)
 
