@@ -1,0 +1,21 @@
+#!/bin/sh
+# Rejects commits whose subject line isn't "chore: ...", "feat: ..." or "fix: ...".
+# Enable once per clone: git config core.hooksPath .githooks
+
+subject=$(grep -v '^#' "$1" | sed -n '1p')
+
+if printf '%s\n' "$subject" | grep -Eq '^(chore|feat|fix): [^[:space:]].*$'; then
+    exit 0
+fi
+
+cat >&2 <<EOF
+Invalid commit message:
+    $subject
+
+The first line must be one of:
+    chore: {message}
+    feat: {message}
+    fix: {message}
+e.g. "feat: add bonus filtering"
+EOF
+exit 1
