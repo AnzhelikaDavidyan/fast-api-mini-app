@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
 
@@ -15,7 +17,9 @@ def _to_schema(row: BonusRow) -> Bonus:
         description=row.description,
         minDeposit=row.min_deposit,
         amount=row.amount,
-        promo=Promo(id=row.promo.id, name=row.promo.name, terms=row.promo.terms, offer=row.promo.offer),
+        promo=Promo(
+            id=row.promo.id, name=row.promo.name, terms=row.promo.terms, offer=row.promo.offer
+        ),
     )
 
 
@@ -72,11 +76,7 @@ class BonusStore:
             return True
 
 
-_store: BonusStore | None = None
-
-
+@lru_cache(maxsize=1)
 def get_store() -> BonusStore:
-    global _store
-    if _store is None:
-        _store = BonusStore(init_db(make_engine()))
-    return _store
+    # Built on first use, so importing the app never touches the database.
+    return BonusStore(init_db(make_engine()))

@@ -1,3 +1,5 @@
+# Pylint can't see that SQLAlchemy's Mapped[...] is generic, so it flags every annotation.
+# pylint: disable=unsubscriptable-object
 import os
 
 from dotenv import load_dotenv
@@ -31,7 +33,9 @@ class BonusRow(Base):
     amount: Mapped[float]
     promo_id: Mapped[int] = mapped_column(ForeignKey("promos.id"), unique=True)
 
-    promo: Mapped[PromoRow] = relationship(lazy="joined", cascade="all, delete-orphan", single_parent=True)
+    promo: Mapped[PromoRow] = relationship(
+        lazy="joined", cascade="all, delete-orphan", single_parent=True
+    )
 
 
 def make_engine(url: str = DATABASE_URL, **kwargs) -> Engine:
